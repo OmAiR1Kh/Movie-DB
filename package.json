@@ -4,7 +4,8 @@
   "description": "Movie-DB",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
