@@ -1,0 +1,23 @@
+{
+  "name": "movie-db",
+  "version": "1.0.0",
+  "description": "Movie-DB",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OmAiR1Kh/Movie-DB.git"
+  },
+  "author": "Omair_Kh_",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OmAiR1Kh/Movie-DB/issues"
+  },
+  "homepage": "https://github.com/OmAiR1Kh/Movie-DB#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15"
+  }
+}
