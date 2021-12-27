@@ -3,6 +3,13 @@ const { response } = require('express')
 const express = require('express')
 const app =express()
 const date = new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3")
+
+const movies = [
+    { title: 'Jaws', year: 1975, rating: 8 },
+    { title: 'Avatar', year: 2009, rating: 7.8 },
+    { title: 'Brazil', year: 1985, rating: 8 },
+    { title: 'الإرهاب والكباب‎', year: 1992, rating: 6.2 }
+]
 /*
 DB connection
 */
@@ -56,6 +63,23 @@ app.get('/search',(req,res) => {
         res.send(response);
     }
 });
+
+app.use('/movies/read', (req,res)=>{
+    res.status(200).json({
+        status:200,
+        message:movies
+    })
+})
+
+app.use('/movies/create', (req,res)=>{
+    res.send('create movies')
+})
+app.use('/movies/update', (req,res)=>{
+    res.send('update movies')
+})
+app.use('/movies/delete', (req,res)=>{
+    res.send('delete movies')
+})
 
 /*
 Listening on PORT
