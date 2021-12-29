@@ -21,20 +21,20 @@ Routes
 app.get('/', (req,res)=>{
     res.send('ok')
 })
-app.use('/test', (req,res)=>{
+app.get('/test', (req,res)=>{
     res.status(200).json({
         status:200,
         message:"ok"
     })
 })
-app.use('/time', (req,res)=>{
+app.get('/time', (req,res)=>{
     res.status(200).json({
         status:200,
         message:date
     })
 })
 
-app.use('/Hello/:id', (req,res)=>{
+app.get('/Hello/:id', (req,res)=>{
     let :id = undefined;
     res.status(200).json({
         status:200,
@@ -64,21 +64,45 @@ app.get('/search',(req,res) => {
     }
 });
 
-app.use('/movies/read', (req,res)=>{
+app.get('/movies/read', (req,res)=>{
     res.status(200).json({
         status:200,
         message:movies
     })
 })
 
-app.use('/movies/create', (req,res)=>{
+app.get('/movies/create', (req,res)=>{
     res.send('create movies')
 })
-app.use('/movies/update', (req,res)=>{
+app.get('/movies/update', (req,res)=>{
     res.send('update movies')
 })
-app.use('/movies/delete', (req,res)=>{
+app.get('/movies/delete', (req,res)=>{
     res.send('delete movies')
+})
+
+app.get("/movies/read/by-date", (req, res) => {
+    let moviesByDate = movies.slice().sort(function (x, y) { return y.year - x.year })
+    res.send({
+        status: 200,
+        data: moviesByDate
+    })
+})
+
+app.get("/movies/read/by-rating", (req, res) => {
+    let moviesByRating = movies.slice().sort(function (x, y) { return y.rating - x.rating })
+    res.send({
+        status: 200,
+        data: moviesByRating
+    })
+})
+
+app.get("/movies/read/by-title", (req, res) => {
+    let moviesByTitle = movies.slice().sort(function (x, y) { return (x.title > y.title) ? 1 : ((x.title < y.title) ? -1 : 0) })
+    res.send({
+        status: 200,
+        data: moviesByTitle
+    })
 })
 
 /*
