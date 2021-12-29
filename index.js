@@ -71,9 +71,6 @@ app.get('/movies/read', (req,res)=>{
     })
 })
 
-app.get('/movies/create', (req,res)=>{
-    res.send('create movies')
-})
 app.get('/movies/update', (req,res)=>{
     res.send('update movies')
 })
