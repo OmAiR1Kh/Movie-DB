@@ -122,6 +122,36 @@ app.get("/movies/read/id/:id", (req, res) => {
 
 })
 
+app.get("/movies/add", (req, res) => {
+    let title = req.query.title
+    let year = req.query.year 
+    let rating = req.query.rating
+    if (title == undefined || year == undefined) {
+        res.send({
+            status: 403,
+            error: true,
+            message: 'you cannot create a movie without providing a title and a year'
+        })
+    } else {
+        if (rating == undefined || isNaN(rating) || rating < 0 || rating > 10) rating = 4
+        if (year.length != 4 || year > '2022' || year < '1900') {
+            res.send({
+                status: 403,
+                error: true,
+                message: 'please enter a valid year'
+            })
+        } else {
+            year = parseInt(year)
+            rating = parseFloat(rating)
+            movies.push({ title, year, rating })
+            res.send({
+                status: 200,
+                data: movies
+            })
+        }
+    }
+})
+
 /*
 Listening on PORT
 */
