@@ -74,9 +74,6 @@ app.get('/movies/read', (req,res)=>{
 app.get('/movies/update', (req,res)=>{
     res.send('update movies')
 })
-app.get('/movies/delete', (req,res)=>{
-    res.send('delete movies')
-})
 
 app.get("/movies/read/by-date", (req, res) => {
     let moviesByDate = movies.slice().sort(function (x, y) { return y.year - x.year })
@@ -146,6 +143,23 @@ app.get("/movies/add", (req, res) => {
                 data: movies
             })
         }
+    }
+})
+
+app.get("/movies/delete/:id", (req, res) => {
+    if (req.params.id < 0 || (req.params.id > movies.length-1) || isNaN(req.params.id)) {
+        res.status(404).json({
+            status: 404,
+            error: true, 
+            message: 'the movie ' + req.params.id + ' does not exist'
+        })
+    } else {
+        movies.splice(req.params.id, 1)
+        res.status(200).json({
+            status: 200,
+            data: movies,
+            message: movies.length + " " + req.params.id
+        })
     }
 })
 
