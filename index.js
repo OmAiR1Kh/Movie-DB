@@ -163,6 +163,30 @@ app.get("/movies/delete/:id", (req, res) => {
     }
 })
 
+app.get("/movies/update/:id", (req, res) => {
+    const id = req.params.id
+    if (id < 0 || (id > movies.length - 1) || isNaN(id)) {
+        res.status(404).json({
+            status: 404,
+            error: true,
+            message: 'the movie ' + id + ' does not exist'
+        })
+    } else {
+        let title = req.query.title
+        let year = req.query.year
+        let rating = req.query.rating
+        if (title != undefined) movies[id].title = title
+        if (year != undefined && !isNaN(year) && year > 1900 && year <= 2022) movies[id].year = year
+        if (rating != undefined && !isNaN(rating) && rating >= 0 && rating <= 10) movies[id].rating = rating
+        res.status(200).json({
+            status: 200,
+            data: movies,
+        })
+
+
+    }
+})
+
 /*
 Listening on PORT
 */
