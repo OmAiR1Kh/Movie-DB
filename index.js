@@ -116,75 +116,100 @@ app.get("/movies/read/id/:id", (req, res) => {
 
 })
 
-app.get("/movies/add", (req, res) => {
-    let title = req.query.title
-    let year = req.query.year 
-    let rating = req.query.rating
-    if (title == undefined || year == undefined) {
-        res.send({
-            status: 403,
-            error: true,
-            message: 'you cannot create a movie without providing a title and a year'
-        })
-    } else {
-        if (rating == undefined || isNaN(rating) || rating < 0 || rating > 10) rating = 4
-        if (year.length != 4 || year > '2022' || year < '1900') {
-            res.send({
-                status: 403,
-                error: true,
-                message: 'please enter a valid year'
-            })
-        } else {
-            year = parseInt(year)
-            rating = parseFloat(rating)
-            movies.push({ title, year, rating })
-            res.send({
-                status: 200,
-                data: movies
-            })
+app.post('/movies/add' , (req, res) => {
+
+    if(!req.query.title){
+        if(!req.query.year){
+            res.status(403).json({status:403, error:true, message:'you cannot create a movie without providing a title and a year'})
+        }
+        else{
+            res.status(403).json({status:403, error:true, message:'you cannot create a movie without providing a title'})
         }
     }
+    
+    else if(!req.query.year) {
+        res.status(403).json({status:403, error:true, message:'you cannot create a movie without providing a year'})
+    }
+    
+    else if(req.query.year.length != 4 || isNaN(req.query.year)){
+        if(isNaN(req.query.year)){
+            res.status(403).json({status:403, error:true, message:'The year provided is not a number'})
+        }
+        else{
+            res.status(403).json({status:403, error:true, message:'The year provided is not of 4 digits'})
+        }
+    }
+    else if(req.query.year > new Date().getFullYear() || req.query.year < 1895 ){
+        res.status(403).json({status:403, error:true, message:'The year provided is not valid'})
+    }
+    
+    else if(req.query.rating && (req.query.rating > 10 || req.query.rating < 0) ){
+        res.status(403).json({status:403, error:true, message:'The rating provided is not valid'})
+    }
+    
+    else {
+        let newMovie = {
+            title: req.query.title,
+            year: req.query.year,
+            rating: `${req.query.rating || 4}`
+        }
+        movies.push(newMovie);
+        res.status(200).json({status:200, data: movies})
+    }
+    
 })
+app.delete(['/movies/delete/:id','/movies/delete' ] , (req, res) => {
+    if(req.params.id){
 
-app.get("/movies/delete/:id", (req, res) => {
-    if (req.params.id < 0 || (req.params.id > movies.length-1) || isNaN(req.params.id)) {
-        res.status(404).json({
-            status: 404,
-            error: true, 
-            message: 'the movie ' + req.params.id + ' does not exist'
-        })
-    } else {
-        movies.splice(req.params.id, 1)
-        res.status(200).json({
-            status: 200,
-            data: movies,
-            message: movies.length + " " + req.params.id
-        })
+        if(Number(req.params.id) >= 0 && req.params.id < movies.length){
+            movies.splice(req.params.id, 1);
+            res.status(200).json({status:200, data: movies})
+        }
+        else{
+            res.status(404).json({status:404, error:true, message:`The movie ${req.params.id} does not exist`})
+        }
+    }
+    else{
+        res.status(404).json({status:404, error:true, message:`Enter the id of the movie`})
     }
 })
 
-app.get("/movies/update/:id", (req, res) => {
-    const id = req.params.id
-    if (id < 0 || (id > movies.length - 1) || isNaN(id)) {
-        res.status(404).json({
-            status: 404,
-            error: true,
-            message: 'the movie ' + id + ' does not exist'
-        })
-    } else {
-        let title = req.query.title
-        let year = req.query.year
-        let rating = req.query.rating
-        if (title != undefined) movies[id].title = title
-        if (year != undefined && !isNaN(year) && year > 1900 && year <= 2022) movies[id].year = year
-        if (rating != undefined && !isNaN(rating) && rating >= 0 && rating <= 10) movies[id].rating = rating
-        res.status(200).json({
-            status: 200,
-            data: movies,
-        })
+app.put(['/movies/update', '/movies/update/:id'] , (req, res) => {
 
+    if(req.params.id){
 
+        if(Number(req.params.id) >= 0 && req.params.id < movies.length){
+            if(!req.query.title && !req.query.year && !req.query.rating){
+                res.status(404).json({status:404, error:true, message:`Enter the data you want to update`})
+            }
+            else if(req.query.year && ( req.query.year > new Date().getFullYear() || req.query.year < 1895 || req.query.year.length != 4 || isNaN(req.query.year) )){
+                res.status(403).json({status:403, error:true, message:'The year provided is not valid'})
+            }
+            
+            else if(req.query.rating && (isNaN(req.query.rating) || req.query.rating >10 || req.query.rating < 0)){
+                res.status(403).json({status:403, error:true, message:'The rating provided is not valid'})
+            }
+            else{
+                let editedMovie={
+                    title : `${req.query.title || movies[req.params.id].title }`,
+                    year : `${req.query.year || movies[req.params.id].year}`,
+                    rating : `${req.query.rating || movies[req.params.id].rating}`
+                }
+                movies.splice(req.params.id, 1, editedMovie)
+    
+    
+                res.status(200).json({status:200, data: movies[req.params.id]})
+            
+            }
+        }
+        else{
+            res.status(404).json({status:404, error:true, message:`The movie ${req.params.id} does not exist`})
+        }
     }
+    else{
+        res.status(404).json({status:404, error:true, message:`Enter the id of the movie`})
+    }
+
 })
 
 /*
